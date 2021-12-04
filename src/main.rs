@@ -13,7 +13,7 @@ fn invalid_function(day: i32, part: i32) {
 fn main() {
     test();
     let day = 3;
-    let part = 1;
+    let part = 2;
 
     match (day, part) {
         (1, 1) => day1::part1(),
