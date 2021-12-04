@@ -6,6 +6,17 @@ pub fn read_as_string(filename: &str) -> String {
   raw_file
 }
 
+pub fn read_as_lines(filename: &str) -> Vec<String> {
+  let raw_data = read_as_string(filename);
+  let lines: Vec<String> = raw_data
+  .trim()
+  .split("\n")
+  .map(|v| v.to_string())
+  .collect();
+
+  lines
+}
+
 pub fn read_as_i32_vec(filename: &str) -> Vec<i32> {
   let raw_data = read_as_string(filename);
   let lines = raw_data.split("\n").collect::<Vec<&str>>();
