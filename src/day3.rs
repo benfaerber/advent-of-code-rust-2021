@@ -51,7 +51,7 @@ pub fn part1() {
   println!("Power Output: {}", multi);
 }
 
-pub fn part2() {
+fn get_bit_list() -> Vec<Vec<i32>> {
   let lines = advent::read_as_lines("day3.txt");
   let all_bits: Vec<Vec<i32>> = lines
   .iter()
@@ -65,6 +65,10 @@ pub fn part2() {
   })
   .collect();
 
+  all_bits
+}
+
+pub fn part2() {
   let get_common = |index: usize, bits: &Vec<Vec<i32>>, is_most: bool| -> i32 {
     let one_count = &bits
     .iter()
@@ -77,7 +81,6 @@ pub fn part2() {
     let gte = |a, b| a >= b;
     let lte = |a, b| a <= b;
     let comp = if is_most {gte} else {lte};
-    println!("{} {} {} {}", one_count, half, total, comp(one_count, &half));
     comp(one_count, &half) as i32
   };
 
@@ -90,23 +93,42 @@ pub fn part2() {
     removed_bits
   };
 
-  let find_bit = |bits: Vec<Vec<i32>>, is_most: bool| {
+  let find_bit = |bits: Vec<Vec<i32>>, is_most: bool| -> String {
     let bit_range = 0..bits[0].len();
     let filtered_bit: Vec<Vec<i32>> = bit_range
     .fold(bits, |acc, index| {
       let common = get_common(index, &acc, is_most);
+      println!("Is Most: {}, Common: {:?}", is_most, common);
+      if acc.len() == 1 {return acc}
       let without_common = remove_uncommon(index, acc, common);
-
       without_common
     });
 
-    filtered_bit
+    let found = &filtered_bit[0];
+    let str_list: Vec<&str> = found
+    .iter()
+    .map(|&v| if v == 1 {"1"} else {"0"})
+    .collect();
+
+    let binary_str = str_list.join("");
+
+    binary_str
   };
 
-  //let most_common_bit = find_bit(all_bits, true);
-  let least_common_bit = find_bit(all_bits, false);
+  let binary_to_decimal = |binary: String| isize::from_str_radix(binary.as_str(), 2).unwrap();
 
-  println!("{:?} {:?}", 1, least_common_bit);
+
+  let all_bits = get_bit_list();
+  let all_bits2 = get_bit_list();
+
+  let most_common_bit = find_bit(all_bits, true);
+  let least_common_bit = find_bit(all_bits2, false);
+
+  let most_common_dec = binary_to_decimal(most_common_bit);
+  let least_common_dec = binary_to_decimal(least_common_bit);
+  let multi = most_common_dec * least_common_dec;
+
+  println!("{} * {} = {}", most_common_dec, least_common_dec, multi);
   // let from_index: usize = 1;
   // let most_common = get_most_common(from_index, &all_bits);
   // let without_uncommon = remove_uncommon(from_index, all_bits, most_common);
