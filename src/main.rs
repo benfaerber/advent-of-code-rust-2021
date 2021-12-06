@@ -3,7 +3,14 @@ mod day2;
 mod day3;
 
 fn test() {
+    let l = 10;
+    let val = if l < 10 {
+        "hi"
+    } else {
+        "bye"
+    };
 
+    println!("{}", val);
 }
 
 fn invalid_function(day: i32, part: i32) {

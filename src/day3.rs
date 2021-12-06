@@ -15,7 +15,7 @@ pub fn part1() {
   })
   .collect();
 
-  let bit_list = vec![0; 12];
+  let bit_list = vec![0; all_bits[0].len()];
   let bit_one_count = all_bits
   .iter()
   .fold(bit_list, |mut acc, bits| {
@@ -52,5 +52,63 @@ pub fn part1() {
 }
 
 pub fn part2() {
+  let lines = advent::read_as_lines("day3.txt");
+  let all_bits: Vec<Vec<i32>> = lines
+  .iter()
+  .map(|line| {
+    let letters: Vec<char> = line.chars().collect();
+    let bits: Vec<i32> = letters
+    .iter()
+    .map(|v| if v == &'1' {1} else {0}).collect();
 
+    bits
+  })
+  .collect();
+
+  let get_common = |index: usize, bits: &Vec<Vec<i32>>, is_most: bool| -> i32 {
+    let one_count = &bits
+    .iter()
+    .fold(0, |acc, b| acc + ((b[index] == 1) as i32));
+
+    let total = &bits.len();
+    let half = (total / 2) as i32;
+
+    //println!("1: {}, total: {}, half: {}", one_count, total, half);
+    let gte = |a, b| a >= b;
+    let lte = |a, b| a <= b;
+    let comp = if is_most {gte} else {lte};
+    println!("{} {} {} {}", one_count, half, total, comp(one_count, &half));
+    comp(one_count, &half) as i32
+  };
+
+  let remove_uncommon = |index: usize, mut bits: Vec<Vec<i32>>, most_common: i32| {
+    let removed_bits: Vec<Vec<i32>> = bits
+    .drain(..)
+    .filter(|b| b[index] == most_common)
+    .collect();
+
+    removed_bits
+  };
+
+  let find_bit = |bits: Vec<Vec<i32>>, is_most: bool| {
+    let bit_range = 0..bits[0].len();
+    let filtered_bit: Vec<Vec<i32>> = bit_range
+    .fold(bits, |acc, index| {
+      let common = get_common(index, &acc, is_most);
+      let without_common = remove_uncommon(index, acc, common);
+
+      without_common
+    });
+
+    filtered_bit
+  };
+
+  //let most_common_bit = find_bit(all_bits, true);
+  let least_common_bit = find_bit(all_bits, false);
+
+  println!("{:?} {:?}", 1, least_common_bit);
+  // let from_index: usize = 1;
+  // let most_common = get_most_common(from_index, &all_bits);
+  // let without_uncommon = remove_uncommon(from_index, all_bits, most_common);
+  // println!("{:?}", without_uncommon.len());
 }
