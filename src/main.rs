@@ -1,3 +1,4 @@
+mod playground;
 mod day1;
 mod day2;
 mod day3;
@@ -13,9 +14,14 @@ fn invalid_function(day: i32, part: i32) {
 }
 
 fn main() {
+    let runs_playground = false;
     // Current Day
     let day = 4;
-    let part = 1;
+    let part = 2;
+
+    if runs_playground {
+        playground::run();
+    }
 
     match (day, part) {
         (1, 1) => day1::part1(),

@@ -134,5 +134,51 @@ pub fn part1() {
 }
 
 pub fn part2() {
+  let chunks: Vec<String> = get_chunks();
 
+  let raw_moves = &chunks[0];
+  let raw_boards = &chunks[1..];
+
+  let moves: Vec<i32> = get_moves(raw_moves);
+  let boards: Vec<Vec<Vec<i32>>> = raw_boards
+  .iter()
+  .map(|raw_board| get_board(raw_board))
+  .collect();
+
+
+  let inner = vec![vec![-1]];
+  let null_board = vec![&inner];
+
+  let move_range = 0..moves.len();
+
+  // I must cheat and use a mutible ref :(
+  let mut win_index: usize = 0;
+
+  let lost_board = move_range
+  .fold(null_board, |acc, index| {
+    let current_moves: Vec<i32> = moves[0..=index].to_vec();
+    //println!("{:?}", current_moves);
+    let lost_board: Vec<&Vec<Vec<i32>>> = boards
+    .iter()
+    .filter(|b| !is_win(&b, &current_moves))
+    .collect();
+
+    if lost_board.len() == 1 {
+      return lost_board;
+    }
+
+    if acc.len() == 1 && is_win(&acc[0], &current_moves) && win_index == 0 {
+      win_index = index;
+    }
+    acc
+  });
+
+  let moves_to_win: Vec<i32> = moves[..=win_index].to_vec();
+  let flat_lost_board: Vec<i32> = flatten_board(&lost_board[0]);
+  let unchecked = get_unchecked(flat_lost_board, moves_to_win);
+
+  let uncheck_sum: i32 = unchecked.iter().sum();
+  let last_called_val = moves[win_index];
+  let multi = uncheck_sum * last_called_val;
+  println!("{}", multi);
 }
