@@ -29,8 +29,16 @@ fn get_board(raw_board: &str) -> Vec<Vec<i32>> {
   grid
 }
 
-fn flatten_board(board: &Vec<&Vec<Vec<i32>>>) {
+fn flatten_board(board: &Vec<Vec<i32>>) -> Vec<i32> {
+  let size: usize = board.len() ** &2;
+  let all_nums: Vec<i32> = board
+  .iter()
+  .fold(vec![], |mut acc, curr| {
+    acc.extend(curr);
+    acc
+  });
 
+  all_nums
 }
 
 fn get_chunks() -> Vec<String> {
@@ -67,6 +75,15 @@ fn is_win(board: &Vec<Vec<i32>>, moves: &Vec<i32>) -> bool {
   win
 }
 
+fn get_unchecked(mut flat_board: Vec<i32>, move_set: Vec<i32>) -> Vec<i32> {
+  let unchecked: Vec<i32> = flat_board
+  .drain(..)
+  .filter(|v| !move_set.contains(v))
+  .collect();
+
+  unchecked
+}
+
 pub fn part1() {
   let chunks: Vec<String> = get_chunks();
 
@@ -84,9 +101,13 @@ pub fn part1() {
   let null_board = vec![&inner];
 
   let move_range = 0..moves.len();
+
+  // I must cheat and use a mutible ref :(
+  let mut move_index = 0;
+
   let won_board = move_range
   .fold(null_board, |acc, index| {
-    let current_moves: Vec<i32> = moves[0..index].to_vec();
+    let current_moves: Vec<i32> = moves[0..=index].to_vec();
     //println!("{:?}", current_moves);
     let won_board: Vec<&Vec<Vec<i32>>> = boards
     .iter()
@@ -95,11 +116,21 @@ pub fn part1() {
 
     let has_found = won_board.len() != 0;
     let is_first_found = acc[0][0][0] == -1;
-    if has_found && is_first_found { won_board } else { acc }
+    if has_found && is_first_found {
+      move_index = index;
+      won_board
+    } else { acc }
   });
 
-  let win_board_nums = flatten_board(&won_board);
+  let win_board_nums = flatten_board(&won_board[0]);
+  let move_set: Vec<i32> = moves[0..=move_index].to_vec();
 
+  let unchecked_values = get_unchecked(win_board_nums, move_set);
+
+  let uncheck_sum: i32 = unchecked_values.iter().sum();
+  let last_called_val = moves[move_index];
+  let multi = uncheck_sum * last_called_val;
+  println!("{}", multi);
 }
 
 pub fn part2() {
