@@ -16,8 +16,8 @@ fn invalid_function(day: i32, part: i32) {
 fn main() {
     let runs_playground = false;
     // Current Day
-    let day = 4;
-    let part = 2;
+    let day = 6;
+    let part = 1;
 
     if runs_playground {
         playground::run();

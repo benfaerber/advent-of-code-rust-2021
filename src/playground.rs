@@ -3,11 +3,9 @@ fn plus(required_num: i32, optional_num: Option<i32>) -> i32 {
 }
 
 fn playground_test() {
-
   let sum_1 = plus(10, Some(23));
   let sum_2 = plus(10, None);
   println!("Sum 1: {}, Sum 2: {}", sum_1, sum_2);
-
 }
 
 pub fn run() {
